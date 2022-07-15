@@ -1,17 +1,17 @@
 {
-  "name": "@suger-tdy/typescript-starter",
+  "name": "@meg-shit/py-caller",
   "version": "0.0.0",
   "packageManager": "pnpm@7.5.0",
-  "description": "starter project for typescript",
+  "description": "Python Invoker in Node Runtime",
   "keywords": [
-    "typescript-starter",
-    "ts-starter"
+    "python invoker",
+    "python caller"
   ],
   "license": "MIT",
   "author": "tangdaoyuan <1197633750@qq.com> (https://github.com/tangdaoyuan/)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tangdaoyuan/typescript-starter.git"
+    "url": "git+https://github.com/meg-shit/pyCaller.git"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -42,9 +42,9 @@
     "release": "bumpp --tag --commit --push && pnpm publish"
   },
   "bugs": {
-    "url": "https://github.com/tangdaoyuan/typescript-starter/issues"
+    "url": "https://github.com/meg-shit/pyCaller/issues"
   },
-  "homepage": "https://github.com/tangdaoyuan/typescript-starter#readme",
+  "homepage": "https://github.com/meg-shit/pyCaller#readme",
   "dependencies": {
     "picocolors": "^1.0.0"
   },

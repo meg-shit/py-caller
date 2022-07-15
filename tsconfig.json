@@ -20,7 +20,7 @@
       "@/*": [
         "src/*"
       ],
-      "typescript-starter/*": [
+      "@meg-shit/py-caller/*": [
         "dist/*"
       ]
     }

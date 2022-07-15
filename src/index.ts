@@ -1,1 +1,1 @@
-export default 'typescript-starter'
+export default '@meg-shit/py-caller'
