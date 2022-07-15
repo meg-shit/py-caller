@@ -1,5 +1,28 @@
-import { expect, it } from 'vitest'
+import { release } from 'os'
+import { afterAll, describe, expect, it, vi } from 'vitest'
+import { runPython } from '@'
 
-it('runs', () => {
-  expect(true).toBe(true)
+describe('runs', async() => {
+  const $consoleLog = vi.spyOn(console, 'log').mockImplementation(() => 'invoke')
+  it('works', async() => {
+    runPython(['import os\n', 'print(os.listdir("."), flush=True)\n'])
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 100)
+    })
+    expect($consoleLog).toBeCalled()
+  })
+  it('again', async() => {
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 100)
+    })
+    runPython(['print("Hello World", flush=True)\n'])
+    expect($consoleLog).toBeCalled()
+  })
+  afterAll(() => {
+    release()
+  })
 })

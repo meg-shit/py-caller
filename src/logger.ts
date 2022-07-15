@@ -8,7 +8,7 @@ export default class Logger {
     }
     catch (error: unknown) {
       if (error instanceof TypeError)
-        console.log(bold(magenta(error.stack)))
+        console.log(`${bold(magenta(error.stack))}\n`)
       else
         console.error(error)
     }

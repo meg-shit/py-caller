@@ -46,6 +46,7 @@
   },
   "homepage": "https://github.com/meg-shit/pyCaller#readme",
   "dependencies": {
+    "execa": "^6.1.0",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
