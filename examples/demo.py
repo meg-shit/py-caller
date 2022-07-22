@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+
+import sys
+
+
+def read_stdin():
+    while True:
+        yield sys.stdin.readline()
+
+
+gen = read_stdin()
+
+for line in gen:
+    if line == '\r\t--MegSeparator--\r\t':
+        break
+    print(line, flush=True, end='')

@@ -1,32 +1,41 @@
-import stream from 'stream'
+import type { ExecaChildProcess } from 'execa'
 import { execa } from 'execa'
 import Logger from './logger'
 
-const subprocess = execa('python3', {
-  stdin: 'pipe',
-  stdout: 'pipe',
-  shell: true,
-})
+const EOL = '\r\t--MegSeparator--\r\t'
 
-if (subprocess.stdout) {
-  subprocess.stdout.on('data', (data) => {
-    // eslint-disable-next-line no-console
-    Logger.info(data.toString())
-  })
-}
+export class PyCaller {
+  subprocess: ExecaChildProcess
 
-export function runPython(code: string[]) {
-  const stdinStream = new stream.Readable()
+  constructor(command: string, args: string[]) {
+    const subprocess = execa(command, args, {
+      stdin: 'pipe',
+      stdout: 'pipe',
+      shell: true,
+    })
 
-  code.forEach((line) => {
-    stdinStream.push(line)
-  })
-  stdinStream.push(null)
+    if (subprocess.stdout) {
+      subprocess.stdout.on('data', (data) => {
+        Logger.info(data.toString())
+      })
+    }
+    this.subprocess = subprocess
+  }
 
-  if (subprocess.stdin)
-    stdinStream.pipe(subprocess.stdin)
-}
+  runPython(code: string[] | null) {
+    if (code === null) {
+      this.subprocess.stdin?.write(EOL, () => {
+        Logger.info('Python process exited')
+        this.subprocess.stdin?.end()
+      })
+      return
+    }
+    const content = code.map(line => `${line}\n`).join('')
+    this.subprocess.stdin?.write(Buffer.from(content))
+    this.subprocess.stdin?.write('\r\n')
+  }
 
-export function release() {
-  subprocess.kill()
+  destory() {
+    this.subprocess.kill()
+  }
 }

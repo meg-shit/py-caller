@@ -1,28 +1,24 @@
-import { release } from 'os'
-import { afterAll, describe, expect, it, vi } from 'vitest'
-import { runPython } from '@'
+import { fileURLToPath } from 'url'
+import path from 'path'
+import { describe, expect, it, vi } from 'vitest'
+import { PyCaller } from '@'
+
+const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/demo.py')
 
 describe('runs', async() => {
   const $consoleLog = vi.spyOn(console, 'log').mockImplementation(() => 'invoke')
+
   it('works', async() => {
-    runPython(['import os\n', 'print(os.listdir("."), flush=True)\n'])
+    const caller = new PyCaller('python3', [scriptPath])
+
+    caller.runPython(['come from nodejs'])
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve()
       }, 500)
     })
     expect($consoleLog).toBeCalled()
-  })
-  it('again', async() => {
-    runPython(['print("Hello World", flush=True)\n'])
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 500)
-    })
-    expect($consoleLog).toBeCalled()
-  })
-  afterAll(() => {
-    release()
+    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
+    caller.destory()
   })
 })
