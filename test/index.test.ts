@@ -9,17 +9,17 @@ describe('runs', async() => {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve()
-      }, 100)
+      }, 500)
     })
     expect($consoleLog).toBeCalled()
   })
   it('again', async() => {
+    runPython(['print("Hello World", flush=True)\n'])
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve()
-      }, 100)
+      }, 500)
     })
-    runPython(['print("Hello World", flush=True)\n'])
     expect($consoleLog).toBeCalled()
   })
   afterAll(() => {
