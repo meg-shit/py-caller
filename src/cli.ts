@@ -1,23 +1,24 @@
 import yargs from 'yargs'
-import inquirer from 'inquirer'
 import Logger from './logger'
 import { PyCaller } from '.'
 
-interface Arguments {
+export interface Arguments {
   command: string
   args: string[]
 }
 
-function inquirerMsg(caller: PyCaller) {
+async function inquirerMsg(caller: PyCaller) {
+  const module = await import('inquirer')
+  const inquirer = module.default || module
+
   return new Promise((resolve, reject) => {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'message',
-          message: 'what is your message?',
-        },
-      ])
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'message',
+        message: 'what is your message?',
+      },
+    ])
       .then((answers) => {
         if (answers.message)
           caller.runPython([answers.message])

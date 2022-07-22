@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es2017",
+    "target": "esnext",
     "module": "esnext",
     "lib": [
-      "esnext"
+      "esnext",
+      "DOM"
     ],
     "moduleResolution": "node",
     "esModuleInterop": true,

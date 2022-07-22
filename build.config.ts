@@ -10,6 +10,11 @@ export default defineBuildConfig({
   rollup: {
     emitCJS: true,
   },
+  externals: [
+    'rollup',
+    'vite',
+    'esbuild',
+  ],
   alias: {
     '@': './src',
   },

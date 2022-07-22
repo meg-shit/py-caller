@@ -1,26 +1,30 @@
 import type { ExecaChildProcess } from 'execa'
-import { execa } from 'execa'
+
 import Logger from './logger'
 
 const EOL = '\r\t--MegSeparator--\r\t'
 
 export class PyCaller {
-  subprocess: ExecaChildProcess
+  subprocess!: ExecaChildProcess
 
   constructor(command: string, args: string[], callback?: (data: string) => void) {
-    const subprocess = execa(command, args, {
-      stdin: 'pipe',
-      stdout: 'pipe',
-      shell: true,
-    })
+    import('execa').then((m) => {
+      const { execa } = m
 
-    if (subprocess.stdout) {
-      subprocess.stdout.on('data', (data) => {
-        Logger.info(data.toString())
-        callback?.(data.toString())
+      const subprocess = execa(command, args, {
+        stdin: 'pipe',
+        stdout: 'pipe',
+        shell: true,
       })
-    }
-    this.subprocess = subprocess
+
+      if (subprocess.stdout) {
+        subprocess.stdout.on('data', (data: string) => {
+          Logger.info(data.toString())
+          callback?.(data.toString())
+        })
+      }
+      this.subprocess = subprocess
+    })
   }
 
   runPython(code: string[] | null) {
