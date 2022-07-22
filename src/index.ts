@@ -7,7 +7,7 @@ const EOL = '\r\t--MegSeparator--\r\t'
 export class PyCaller {
   subprocess: ExecaChildProcess
 
-  constructor(command: string, args: string[]) {
+  constructor(command: string, args: string[], callback?: (data: string) => void) {
     const subprocess = execa(command, args, {
       stdin: 'pipe',
       stdout: 'pipe',
@@ -17,6 +17,7 @@ export class PyCaller {
     if (subprocess.stdout) {
       subprocess.stdout.on('data', (data) => {
         Logger.info(data.toString())
+        callback?.(data.toString())
       })
     }
     this.subprocess = subprocess

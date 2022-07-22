@@ -26,8 +26,12 @@
   },
   "files": [
     "dist",
-    "*.d.ts"
+    "*.d.ts",
+    "bin"
   ],
+  "bin": {
+    "py-caller": "./bin/py-caller.js"
+  },
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
@@ -47,10 +51,14 @@
   "homepage": "https://github.com/meg-shit/pyCaller#readme",
   "dependencies": {
     "execa": "^6.1.0",
-    "picocolors": "^1.0.0"
+    "inquirer": "^9.0.2",
+    "picocolors": "^1.0.0",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@suger-tdy/eslint-config": "1.1.7",
+    "@types/inquirer": "^8.2.1",
+    "@types/yargs": "^17.0.10",
     "bumpp": "8.2.1",
     "esbuild": "0.14.49",
     "eslint": "8.19.0",
