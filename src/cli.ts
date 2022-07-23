@@ -53,7 +53,8 @@ yargs
   async(argv) => {
     try {
       const { command, args } = argv
-      const caller = new PyCaller(command, args, async() => {
+      const caller = new PyCaller(command, args, async(data) => {
+        Logger.info(data)
         await inquirerMsg(caller)
       })
       await inquirerMsg(caller)

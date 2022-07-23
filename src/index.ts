@@ -22,7 +22,6 @@ export class PyCaller {
 
       if (subprocess.stdout) {
         subprocess.stdout.on('data', (data: string) => {
-          Logger.info(data.toString())
           callback?.(data.toString())
         })
       }
@@ -43,7 +42,6 @@ export class PyCaller {
     }
     const content = code.map(line => `${line}\n`).join('')
     this.subprocess.stdin?.write(Buffer.from(content))
-    this.subprocess.stdin?.write('\r\n')
   }
 
   destory() {
