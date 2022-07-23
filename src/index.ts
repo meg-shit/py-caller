@@ -6,9 +6,12 @@ const EOL = '\r\t--MegSeparator--\r\t'
 
 export class PyCaller {
   subprocess!: ExecaChildProcess
+  _promise: Promise<typeof import('execa')>
 
   constructor(command: string, args: string[], callback?: (data: string) => void) {
-    import('execa').then((m) => {
+    this._promise = import('execa')
+
+    this._promise.then((m) => {
       const { execa } = m
 
       const subprocess = execa(command, args, {
@@ -27,7 +30,10 @@ export class PyCaller {
     })
   }
 
-  runPython(code: string[] | null) {
+  async runPython(code: string[] | null) {
+    if (!this.subprocess)
+      await this._promise
+
     if (code === null) {
       this.subprocess.stdin?.write(EOL, () => {
         Logger.info('Python process exited')
