@@ -1,10 +1,27 @@
+import fs from 'fs'
+import path from 'path'
 import yargs from 'yargs'
+import chokidar from 'chokidar'
 import Logger from './logger'
 import { PyCaller } from '.'
 
 export interface Arguments {
   command: string
   args: string[]
+  watch: boolean
+}
+
+function watchFiles(filePath: string, callback: (filePath: string) => void) {
+  const absPath = path.resolve(filePath)
+  const watcher = chokidar.watch(absPath, {
+    ignored: /(^|[\/\\])\../,
+  })
+
+  watcher.on('change', callback)
+
+  return () => {
+    watcher.close()
+  }
 }
 
 async function inquirerMsg(caller: PyCaller) {
@@ -31,6 +48,15 @@ async function inquirerMsg(caller: PyCaller) {
   })
 }
 
+function createCaller(argv: Arguments) {
+  const { command, args } = argv
+  const caller = new PyCaller(command, args, async(data) => {
+    Logger.info(data)
+    await inquirerMsg(caller)
+  })
+  return caller
+}
+
 // eslint-disable-next-line no-unused-expressions
 yargs
   .scriptName('py-caller')
@@ -49,14 +75,29 @@ yargs
         type: 'array',
         default: [],
       })
+      .option('watch', {
+        describe: 'Watch the command(files) for changes',
+        type: 'boolean',
+        default: true,
+      })
   },
   async(argv) => {
     try {
-      const { command, args } = argv
-      const caller = new PyCaller(command, args, async(data) => {
-        Logger.info(data)
-        await inquirerMsg(caller)
-      })
+      let caller = createCaller(argv)
+
+      const { args, watch } = argv
+
+      if (watch) {
+        if (args[0] && fs.existsSync(args[0])) {
+          watchFiles(args[0], async(filePath) => {
+            Logger.info(`File ${filePath} changed`)
+            Logger.info('Reload Caller...')
+            caller.destory()
+            caller = createCaller(argv)
+            await inquirerMsg(caller)
+          })
+        }
+      }
 
       process.on('SIGINT', () => {
         caller.destory()
