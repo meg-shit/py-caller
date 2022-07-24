@@ -1,6 +1,6 @@
 {
   "name": "@meg-shit/py-caller",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "packageManager": "pnpm@7.5.0",
   "description": "Python Invoker in Node Runtime",
   "keywords": [
