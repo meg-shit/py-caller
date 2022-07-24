@@ -45,6 +45,6 @@ export class PyCaller {
   }
 
   destory() {
-    this.subprocess.kill()
+    this.subprocess?.kill()
   }
 }

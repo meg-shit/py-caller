@@ -57,6 +57,12 @@ yargs
         Logger.info(data)
         await inquirerMsg(caller)
       })
+
+      process.on('SIGINT', () => {
+        caller.destory()
+        process.exit(0)
+      })
+
       await inquirerMsg(caller)
     }
     catch (error) {
