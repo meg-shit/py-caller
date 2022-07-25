@@ -36,9 +36,12 @@ async function inquirerMsg(caller: PyCaller) {
         message: 'what is your message?',
       },
     ])
-      .then((answers) => {
-        if (answers.message)
-          caller.runPython([answers.message])
+      .then(async(answers) => {
+        if (answers.message) { caller.runPython([answers.message]) }
+        else {
+          Logger.error('no message')
+          await inquirerMsg(caller)
+        }
         resolve(0)
       })
       .catch((error: unknown) => {
