@@ -1,14 +1,20 @@
 import type { ExecaChildProcess } from 'execa'
+import type { IOptions } from './types'
 
 import Logger from './logger'
 
-const EOL = '\r\t--MegSeparator--\r\t'
+const defaultOptions: IOptions = {
+  killSignal: '\r\t--MegEXIT--\r\t',
+  EOL: '\r\t--MegSeparator--\r\t',
+}
 
 export class PyCaller {
   subprocess!: ExecaChildProcess
   _promise: Promise<typeof import('execa')>
+  _options: IOptions
 
-  constructor(command: string, args: string[], callback?: (data: string) => void) {
+  constructor(command: string, args: string[], options: Partial<IOptions> = {}, callback?: (data: string) => void) {
+    this._options = { ...defaultOptions, ...options }
     this._promise = import('execa')
 
     this._promise.then((m) => {
@@ -34,7 +40,7 @@ export class PyCaller {
       await this._promise
 
     if (code === null) {
-      this.subprocess.stdin?.write(EOL, () => {
+      this.subprocess.stdin?.write(this._options.EOL, () => {
         Logger.info('Python process exited')
         this.subprocess.stdin?.end()
       })

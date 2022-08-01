@@ -10,7 +10,7 @@ describe('runs', async() => {
 
   it('works', async() => {
     // eslint-disable-next-line no-console
-    const caller = new PyCaller('python3', [scriptPath], data => console.log(data))
+    const caller = new PyCaller('python3', [scriptPath], {}, data => console.log(data))
 
     caller.runPython(['come from nodejs'])
     await new Promise<void>((resolve) => {
