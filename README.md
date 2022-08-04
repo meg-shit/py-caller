@@ -39,7 +39,7 @@ import { PyCaller } from '@meg-shit/py-caller'
 const command = 'python'
 const args = ['demo.py']
 
-const caller = new PyCaller(command, args, async(data) => {
+const caller = new PyCaller(command, args, {}, async(data) => {
   // do something for response
 })
 

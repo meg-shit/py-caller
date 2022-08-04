@@ -23,7 +23,7 @@ export class PyCaller {
       const subprocess = execa(command, args, {
         stdin: 'pipe',
         stdout: 'pipe',
-        shell: true,
+        stderr: 'pipe',
       })
 
       if (subprocess.stdout) {
@@ -31,6 +31,13 @@ export class PyCaller {
           callback?.(data.toString())
         })
       }
+
+      if (subprocess.stderr) {
+        subprocess.stderr.on('data', (data: string) => {
+          callback?.(data.toString())
+        })
+      }
+
       this.subprocess = subprocess
     })
   }
