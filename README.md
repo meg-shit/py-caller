@@ -35,13 +35,16 @@ py-caller -h
 ```ts
 import { PyCaller } from '@meg-shit/py-caller'
 
-// params: command, args
 const command = 'python'
 const args = ['demo.py']
 
-const caller = new PyCaller(command, args, {}, async(data) => {
-  // do something for response
-})
+const options = {
+  command,
+  args,
+  callback: data => console.log(data),
+}
+
+const caller = new PyCaller(options)
 
 caller.runPython(['hello world~'])
 ```

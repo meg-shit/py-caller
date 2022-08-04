@@ -1,4 +1,4 @@
-import { EventEmitter } from 'stream'
+import { EventEmitter } from 'events'
 import type { ExecaChildProcess } from 'execa'
 import { nanoid } from 'nanoid'
 import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOptions } from './types'

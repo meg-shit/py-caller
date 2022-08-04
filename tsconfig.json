@@ -4,8 +4,7 @@
     "target": "esnext",
     "module": "esnext",
     "lib": [
-      "esnext",
-      "DOM"
+      "esnext"
     ],
     "moduleResolution": "node",
     "esModuleInterop": true,
