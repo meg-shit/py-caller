@@ -53,14 +53,14 @@ async function inquirerMsg(caller: PyCaller) {
 
 function createCaller(argv: Arguments) {
   const { command, args } = argv
-  const caller = new PyCaller(
+  const caller = new PyCaller({
     command,
     args,
-    {},
-    async(data) => {
+    callback: async(data) => {
       Logger.info(data)
       await inquirerMsg(caller)
     },
+  },
   )
   return caller
 }
