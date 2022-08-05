@@ -32,6 +32,8 @@ py-caller -h
 
 ## Programmatic usage
 
+### Normal Usage
+
 ```ts
 import { PyCaller } from '@meg-shit/py-caller'
 
@@ -49,4 +51,33 @@ const caller = new PyCaller(options)
 caller.runPython(['hello world~'])
 ```
 
+### Pools Usage
 
+```ts
+
+// a.ts
+import { PyCallerPool } from '@meg-shit/py-caller'
+
+const pyCallerPool = new PyCallerPool()
+const key = 'test'
+
+// b.ts
+const command = 'python'
+const args = ['demo.py']
+
+const options = {
+  command,
+  args,
+}
+
+pyCallerPool.create(key, options)
+
+// c.ts
+pyCallerPool.listen(key, (data) => {
+  console.log(data)
+  // print "hello world~\n"  after `pyCallerPool.send` called
+})
+
+// d.ts
+pyCallerPool.send(key, ['hello world~'])
+```
