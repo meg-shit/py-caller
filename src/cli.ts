@@ -9,6 +9,7 @@ export interface Arguments {
   command: string
   args: string[]
   watch: boolean
+  autoInquire: boolean
 }
 
 function watchFiles(filePath: string, callback: (filePath: string) => void) {
@@ -52,13 +53,15 @@ async function inquirerMsg(caller: PyCaller) {
 }
 
 function createCaller(argv: Arguments) {
-  const { command, args } = argv
+  const { command, args, autoInquire } = argv
   const caller = new PyCaller({
     command,
     args,
     callback: async(data) => {
       Logger.info(data)
-      await inquirerMsg(caller)
+
+      if (autoInquire)
+        await inquirerMsg(caller)
     },
   },
   )
@@ -88,12 +91,17 @@ yargs
         type: 'boolean',
         default: true,
       })
+      .option('auto-inquire', {
+        describe: 'Auto inquire when the command is finished',
+        type: 'boolean',
+        default: true,
+      })
   },
   async(argv) => {
     try {
-      let caller = createCaller(argv)
-
       const { args, watch } = argv
+
+      let caller = createCaller(argv)
 
       if (watch) {
         if (args[0] && fs.existsSync(args[0])) {

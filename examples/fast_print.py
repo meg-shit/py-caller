@@ -36,3 +36,5 @@ if __name__ == "__main__":
 
     for i in range(5):
         c.write({"task_id": 123, "state": "success"})
+    for line in c.read():
+        c.write({"task_id": 123, "state": "success"})
