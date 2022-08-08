@@ -37,7 +37,6 @@ export class PyCaller {
       })
 
       if (subprocess.stdout) {
-        const buf: string[] = []
         subprocess.stdout.on('data', (data: string) => {
           const content = data.toString()
           if (content.includes(this._options.killSignal)) {
@@ -46,13 +45,12 @@ export class PyCaller {
             return
           }
 
-          if (content.endsWith(`${this._options.EOL}\n`)) {
-            buf.push(content.slice(0, -(this._options.EOL.length + 1)))
-            const str = buf.join('')
-            buf.splice(0, buf.length)
-            Promise.resolve(callback?.(str))
+          const commands = content.split(`${this._options.EOL}\n`)
+          if (commands.length) {
+            Promise.resolve(callback?.(
+              commands.filter(cmd => cmd !== ''),
+            ))
           }
-          else { buf.push(data) }
         })
       }
 

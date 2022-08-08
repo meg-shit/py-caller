@@ -9,7 +9,7 @@ export interface IPyCallerOptions {
   command: string
   args: string[]
   options?: Partial<IOptions>
-  callback?: ((data: string) => void) | ((data: string) => Promise<void>)
+  callback?: ((data: any) => void) | ((data: any) => Promise<void>)
 }
 
 export interface IPyCallerPoolOptions extends Omit<IPyCallerOptions, 'callback'> {

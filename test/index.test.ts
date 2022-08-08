@@ -39,10 +39,16 @@ describe('basic', async() => {
 })
 
 describe('pools', () => {
+  let pool!: PyCallerPool
+  beforeEach(() => {
+    pool = new PyCallerPool()
+  })
+  afterEach(() => {
+    pool.destroy()
+  })
   it('pool works with multiple callers', async() => {
     const $console = vi.fn(() => 'invoke')
     const key = 'default'
-    const pool = new PyCallerPool()
     pool.listen(key, (data) => {
       expect(data).not.toBeNull()
       $console()
@@ -60,14 +66,12 @@ describe('pools', () => {
     pool.send(key, [`come from nodejs ${id1}`], id1)
     await _setTimeout(500)
     expect($console).toBeCalledTimes(3)
-    pool.destroy()
   })
 
   it('pool works with multiple listener', async() => {
     const $console1 = vi.fn(() => 'invoke1')
     const $console2 = vi.fn(() => 'invoke2')
     const key = 'default'
-    const pool = new PyCallerPool()
     pool.listen(key, (data) => {
       expect(data).not.toBeNull()
       $console1()
@@ -84,6 +88,5 @@ describe('pools', () => {
     expect($console1).toBeCalled()
     expect($console2).toBeCalled()
     expect(pool.listenerCount(key)).toBe(2)
-    pool.destroy()
   })
 })
