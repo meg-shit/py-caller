@@ -2,7 +2,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import { setTimeout as _setTimeout } from 'timers/promises'
 import type { SpyInstance } from 'vitest'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PyCaller, PyCallerPool } from '@'
 import type { IPyCallerOptions } from '@/types'
 
@@ -15,8 +15,9 @@ const options: IPyCallerOptions = {
   callback: data => console.log(data),
 }
 
-describe('basic', async() => {
+describe.only('basic', async() => {
   let $consoleLog: null | SpyInstance = null
+  const caller = new PyCaller(options)
 
   beforeEach(() => {
     $consoleLog = vi.spyOn(console, 'log').mockImplementation(() => 'invoke')
@@ -24,16 +25,16 @@ describe('basic', async() => {
   afterEach(() => {
     $consoleLog?.mockReset()
   })
+  afterAll(() => {
+    caller.destory()
+  })
 
   it('works', async() => {
-    const caller = new PyCaller(options)
-
     caller.runPython(['come from nodejs'])
     await _setTimeout(1000)
     expect($consoleLog).toBeCalled()
-    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
     expect($consoleLog).toReturnWith('invoke')
-    caller.destory()
+    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
   })
 })
 

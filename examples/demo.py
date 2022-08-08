@@ -11,6 +11,4 @@ def read_stdin():
 gen = read_stdin()
 
 for line in gen:
-    if line == '\r\t--MegSeparator--\r\t':
-        break
     print(line, flush=True, end='')

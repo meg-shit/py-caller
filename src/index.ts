@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
 import { nanoid } from 'nanoid'
 import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOptions } from './types'
@@ -8,6 +9,8 @@ import Logger from './logger'
 const defaultOptions: IOptions = {
   killSignal: '\r\t--MegEXIT--\r\t',
   EOL: '\r\t--MegSeparator--\r\t',
+  AUTO_EOL: true,
+  killTimeout: 3000,
 }
 
 export class PyCaller {
@@ -34,6 +37,7 @@ export class PyCaller {
       })
 
       if (subprocess.stdout) {
+        const buf: string[] = []
         subprocess.stdout.on('data', (data: string) => {
           const content = data.toString()
           if (content.includes(this._options.killSignal)) {
@@ -41,7 +45,14 @@ export class PyCaller {
             this.destory()
             return
           }
-          callback?.(data.toString())
+
+          if (content.endsWith(`${this._options.EOL}\n`)) {
+            buf.push(content.slice(0, -(this._options.EOL.length + 1)))
+            const str = buf.join('')
+            buf.splice(0, buf.length)
+            Promise.resolve(callback?.(str))
+          }
+          else { buf.push(data) }
         })
       }
 
@@ -61,14 +72,27 @@ export class PyCaller {
       await this._promise
 
     if (code === null) {
-      this.subprocess.stdin?.write(this._options.EOL, () => {
+      this.subprocess.stdin?.write(this._options.killSignal, () => {
         Logger.info('Python process exited')
         this.subprocess.stdin?.end()
+        this.destory()
       })
       return
     }
     const content = code.map(line => `${line}\n`).join('')
-    this.subprocess.stdin?.write(Buffer.from(content))
+    this.subprocess.stdin?.write(Buffer.from(content), async(error) => {
+      if (error) {
+        Logger.error(error)
+        return
+      }
+
+      if (this._options.AUTO_EOL) {
+        // flush too fast, will cause python read data as a single line
+        // https://stackoverflow.com/questions/12510835/stdout-flush-for-nodejs
+        await _setTimeout(100)
+        this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}\n`))
+      }
+    })
   }
 
   isAlive() {
@@ -85,7 +109,7 @@ export class PyCaller {
         Logger.error('Python process still alive after 5s, force kill it')
         this.subprocess?.kill('SIGKILL')
       }
-    }, 5000)
+    }, this._options.killTimeout)
   }
 }
 

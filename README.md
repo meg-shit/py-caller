@@ -40,9 +40,17 @@ import { PyCaller } from '@meg-shit/py-caller'
 const command = 'python'
 const args = ['demo.py']
 
+const callerOpts = {
+  killSignal: '\r\t--MegEXIT--\r\t',
+  EOL: '\r\t--MegSeparator--\r\t',
+  AUTO_EOL: true,
+  killTimeout: 3000,
+}
+
 const options = {
   command,
   args,
+  options: callerOpts,
   callback: data => console.log(data),
 }
 
@@ -81,3 +89,32 @@ pyCallerPool.listen(key, (data) => {
 // d.ts
 pyCallerPool.send(key, ['hello world~'])
 ```
+
+## Options Api
+
+### command
+
+  * `command`: The command to run
+  * Type: String
+
+### args
+
+  * `args`: The arguments to pass to the command
+  * Type: Array
+  * Default: []
+
+### options
+
+  * `options`: The options to pass to the caller
+  * Type: Object
+  * Default: `{
+      killSignal: '\r\t--MegEXIT--\r\t',
+      EOL: '\r\t--MegSeparator--\r\t',
+      AUTO_EOL: true,
+      killTimeout: 3000
+    }`
+
+### callback
+
+  * `callback`: The callback to receive the data
+  * Type: ((data: string) => void) | ((data: string) => Promise<void>)
