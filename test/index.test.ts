@@ -15,7 +15,7 @@ const options: IPyCallerOptions = {
   callback: data => console.log(data),
 }
 
-describe.only('basic', async() => {
+describe('basic', async() => {
   let $consoleLog: null | SpyInstance = null
   const caller = new PyCaller(options)
 
