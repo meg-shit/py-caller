@@ -8,9 +8,14 @@ import Logger from './logger'
 
 const defaultOptions: IOptions = {
   killSignal: '\r\t--MegEXIT--\r\t',
+  killTimeout: 3000,
   EOL: '\r\t--MegSeparator--\r\t',
   AUTO_EOL: true,
-  killTimeout: 3000,
+  stdioOption: {
+    stdin: 'pipe',
+    stdout: 'pipe',
+    stderr: 'inherit',
+  },
 }
 
 export class PyCaller {
@@ -30,11 +35,7 @@ export class PyCaller {
     this._promise.then((m) => {
       const { execa } = m
 
-      const subprocess = execa(command, args, {
-        stdin: 'pipe',
-        stdout: 'pipe',
-        stderr: 'pipe',
-      })
+      const subprocess = execa(command, args, this._options.stdioOption)
 
       if (subprocess.stdout) {
         subprocess.stdout.on('data', (data: string) => {
@@ -54,10 +55,11 @@ export class PyCaller {
         })
       }
 
-      if (subprocess.stderr) {
+      if (subprocess.stderr && this._options.stdioOption.stderr !== 'inherit') {
         subprocess.stderr.on('data', (data: string) => {
-          this.destory()
-          Logger.error(data.toString())
+          Logger.error(new Error(`Python process error: ${data}`))
+          if (data.includes(this._options.killSignal))
+            this.destory()
         })
       }
 

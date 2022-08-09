@@ -21,13 +21,17 @@ py-caller -h
 
 # py-caller <command> [args...]
 
-# 位置：
-#   command  The command to run                                           [字符串]
+# Positionals:
+#   command  The command to run                                           [string]
 
-# 选项：
-#       --args     The arguments to pass to the command        [数组] [默认值: []]
-#   -h, --help     显示帮助信息                                             [布尔]
-#   -v, --version  显示版本号                                               [布尔]
+# Options:
+#       --args          The arguments to pass to the command [array] [default: []]
+#       --watch         Enable Watch the command(files) for changes
+#                                                        [boolean] [default: true]
+#       --auto-inquire  Enable auto next question (except first)
+#                                                        [boolean] [default: true]
+#   -h, --help          Show help                                        [boolean]
+#   -v, --version       Show version number                              [boolean]
 ```
 
 ## Programmatic usage
@@ -111,7 +115,12 @@ pyCallerPool.send(key, ['hello world~'])
       killSignal: '\r\t--MegEXIT--\r\t',
       EOL: '\r\t--MegSeparator--\r\t',
       AUTO_EOL: true,
-      killTimeout: 3000
+      killTimeout: 3000,
+      stdioOption: {
+        stdin: 'pipe',
+        stdout: 'pipe',
+        stderr: 'inherit',
+      }
     }`
 
 ### callback

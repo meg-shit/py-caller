@@ -1,8 +1,15 @@
+import type { StdioOption } from 'execa'
+
 export interface IOptions {
   EOL: string
   AUTO_EOL: boolean
   killSignal: string
   killTimeout: number
+  stdioOption: {
+    readonly stdin: 'pipe'
+    readonly stdout: 'pipe'
+    stderr: StdioOption
+  }
 }
 
 export interface IPyCallerOptions {

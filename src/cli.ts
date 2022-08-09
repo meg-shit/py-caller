@@ -87,12 +87,12 @@ yargs
         default: [],
       })
       .option('watch', {
-        describe: 'Watch the command(files) for changes',
+        describe: 'Enable Watch the command(files) for changes',
         type: 'boolean',
         default: true,
       })
       .option('auto-inquire', {
-        describe: 'Auto inquire when the command is finished',
+        describe: 'Enable auto next question (except first)',
         type: 'boolean',
         default: true,
       })
