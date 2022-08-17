@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import os from 'os'
 import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
 import { nanoid } from 'nanoid'
@@ -46,7 +47,9 @@ export class PyCaller {
             return
           }
 
-          const commands = content.split(`${this._options.EOL}\n`)
+          const commands = content
+            .replace(os.EOL, '\n')
+            .split(`${this._options.EOL}\n`)
           if (commands.length) {
             Promise.resolve(callback?.(
               commands.filter(cmd => cmd !== ''),
