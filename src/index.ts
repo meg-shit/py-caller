@@ -48,7 +48,7 @@ export class PyCaller {
           }
 
           const commands = content
-            .replace(os.EOL, '\n')
+            .replaceAll(os.EOL, '\n')
             .split(`${this._options.EOL}\n`)
           if (commands.length) {
             Promise.resolve(callback?.(
