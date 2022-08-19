@@ -39,22 +39,44 @@ export class PyCaller {
       const subprocess = execa(command, args, this._options.stdioOption)
 
       if (subprocess.stdout) {
+        // TODO
+        // optimize use buffer
+        const chunks: string[] = []
         subprocess.stdout.on('data', (data: string) => {
           const content = data.toString()
+          if (!content)
+            return
+
           if (content.includes(this._options.killSignal)) {
             Logger.info('Python process received exited signal')
             this.destory()
             return
           }
 
-          const commands = content
+          const commandStr = content
             .replaceAll(os.EOL, '\n')
-            .split(`${this._options.EOL}\n`)
-          if (commands.length) {
-            Promise.resolve(callback?.(
-              commands.filter(cmd => cmd !== ''),
-            ))
+
+          if (this._options.AUTO_EOL) {
+            if (!commandStr.includes(this._options.EOL)) {
+              chunks.push(commandStr)
+              return
+            }
           }
+
+          const commands = commandStr.split(`${this._options.EOL}\n`)
+
+          commands[0] = chunks.join('') + commands[0]
+          chunks.splice(0, chunks.length)
+
+          const len = commands.length
+          if (len >= 2 && commands[len - 1] !== '') {
+            chunks.push(commands[len - 1])
+            commands[len - 1] = ''
+          }
+
+          Promise.resolve(callback?.(
+            commands.filter(cmd => cmd !== ''),
+          ))
         })
       }
 

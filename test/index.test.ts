@@ -90,3 +90,29 @@ describe('pools', () => {
     expect(pool.listenerCount(key)).toBe(2)
   })
 })
+
+describe('perf', async() => {
+  const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/size.py')
+
+  const options: IPyCallerOptions = {
+    command: 'python3',
+    args: [scriptPath],
+    // eslint-disable-next-line no-console
+    callback: (data) => {
+      expect(data.length).toBe(1)
+      expect(data?.[0].length).toBe(10485760)
+    },
+  }
+  const caller = new PyCaller(options)
+
+  afterAll(() => {
+    caller.destory()
+  })
+
+  it('works with 10M Output', async() => {
+    caller.runPython(['Ping!'])
+    await _setTimeout(2000)
+
+    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
+  })
+})
