@@ -34,6 +34,10 @@ py-caller -h
 #   -v, --version       Show version number                              [boolean]
 ```
 
+## Python script
+
+[Reference here](https://github.com/meg-shit/pyCaller/tree/main/examples)
+
 ## Programmatic usage
 
 ### Normal Usage
@@ -42,7 +46,7 @@ py-caller -h
 import { PyCaller } from '@meg-shit/py-caller'
 
 const command = 'python'
-const args = ['demo.py']
+const args = ['demo.py'] // python script location
 
 const callerOpts = {
   killSignal: '\r\t--MegEXIT--\r\t',
