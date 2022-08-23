@@ -114,7 +114,7 @@ pyCallerPool.send(key, ['hello world~'])
 ### options
 
   * `options`: The options to pass to the caller
-  * Type: Object
+  * Type: Object （[definition](https://github.com/meg-shit/pyCaller/blob/7d3b882e3a6b0683842faecdc3c7fcb1171f6b2a/src/types.ts#L3)）
   * Default: `{
       killSignal: '\r\t--MegEXIT--\r\t',
       EOL: '\r\t--MegSeparator--\r\t',
