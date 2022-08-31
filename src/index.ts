@@ -124,11 +124,17 @@ export class PyCaller {
     return !this.subprocess.killed
   }
 
-  destory() {
+  destory(force = false) {
     if (!this.subprocess)
       return
 
     this.subprocess?.kill()
+
+    if (force) {
+      this.subprocess?.kill('SIGKILL')
+
+      return
+    }
     setTimeout(() => {
       if (this.isAlive()) {
         Logger.error('Python process still alive after 5s, force kill it')
@@ -189,14 +195,14 @@ export class PyCallerPool extends EventEmitter {
   destroy(key?: string) {
     if (key) {
       this._pool.get(key)?.forEach((caller) => {
-        caller.destory()
+        caller.destory(true)
       })
       this._pool.delete(key)
       return
     }
     this._pool.forEach((callers) => {
       callers.forEach((caller) => {
-        caller.destory()
+        caller.destory(true)
       })
     })
     this._pool.clear()
