@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 import os from 'os'
 import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
-import { execa, execaSync } from 'execa'
+import { execaSync } from 'execa'
 import { nanoid } from 'nanoid'
 import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOptions } from './types'
 
