@@ -26,7 +26,7 @@ describe('basic', async() => {
     $consoleLog?.mockReset()
   })
   afterAll(() => {
-    caller.destory()
+    caller.destory(true)
   })
 
   it('works', async() => {
@@ -106,7 +106,7 @@ describe('perf', async() => {
   const caller = new PyCaller(options)
 
   afterAll(() => {
-    caller.destory()
+    caller.destory(true)
   })
 
   it('works with 10M Output', async() => {
