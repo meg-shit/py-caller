@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 import os from 'os'
 import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
+import { execa, execaSync } from 'execa'
 import { nanoid } from 'nanoid'
 import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOptions } from './types'
 
@@ -128,13 +129,20 @@ export class PyCaller {
     if (!this.subprocess)
       return
 
-    this.subprocess?.kill()
-
     if (force) {
-      this.subprocess?.kill('SIGKILL')
+      if (this.subprocess.pid && os.platform() === 'win32') {
+        const ret = execaSync('taskkill', ['/pid', `${this.subprocess.pid}`, '/f', '/t'])
+        if (ret.exitCode)
+          Logger.error(ret.stdout)
+      }
+
+      else { this.subprocess.kill('SIGKILL') }
 
       return
     }
+
+    this.subprocess?.kill()
+
     setTimeout(() => {
       if (this.isAlive()) {
         Logger.error('Python process still alive after 5s, force kill it')
