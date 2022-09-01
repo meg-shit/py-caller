@@ -136,7 +136,7 @@ export class PyCaller {
           Logger.error(ret.stdout)
       }
 
-      else { this.subprocess.kill('SIGKILL') }
+      this.subprocess.kill('SIGKILL')
 
       return
     }
