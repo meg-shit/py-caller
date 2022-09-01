@@ -9,7 +9,7 @@ import type { IPyCallerOptions } from '@/types'
 const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/demo.py')
 
 const options: IPyCallerOptions = {
-  command: 'python3',
+  command: 'python',
   args: [scriptPath],
   // eslint-disable-next-line no-console
   callback: data => console.log(data),
@@ -50,6 +50,7 @@ describe('pools', () => {
     const $console = vi.fn(() => 'invoke')
     const key = 'default'
     pool.listen(key, (data) => {
+      // console.warn(data)
       expect(data).not.toBeNull()
       $console()
     })
@@ -95,7 +96,7 @@ describe('perf', async() => {
   const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/size.py')
 
   const options: IPyCallerOptions = {
-    command: 'python3',
+    command: 'python',
     args: [scriptPath],
     // eslint-disable-next-line no-console
     callback: (data) => {

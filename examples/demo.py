@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
+import os
+import time
+import json
 
 
 def read_stdin():
@@ -10,7 +13,11 @@ def read_stdin():
 
 gen = read_stdin()
 
-for line in gen:
-    if line != "\r\t--MegSeparator--\r\t\n":
-        print(line + "\r\t--MegSeparator--\r\t")
-        sys.stdout.flush()
+try:
+    for line in gen:
+        if line != ("\t--MegSeparator--\t\n"):
+            print(line + "\t--MegSeparator--\t")
+            sys.stdout.flush()
+except:
+    print('exception stderr', file=sys.stderr)
+    

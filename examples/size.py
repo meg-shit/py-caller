@@ -15,5 +15,5 @@ bf = memoryview(s)
 
 for line in gen:
     if line != "\r\t--MegSeparator--\r\t\n":
-        print(str(bf, 'utf8') + "\r\t--MegSeparator--\r\t\n", end='')
+        print(str(bf) + "\r\t--MegSeparator--\r\t\n", end="")
         sys.stdout.flush()

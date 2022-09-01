@@ -9,9 +9,9 @@ import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOption
 import Logger from './logger'
 
 const defaultOptions: IOptions = {
-  killSignal: '\r\t--MegEXIT--\r\t',
+  killSignal: '\t--MegEXIT--\t',
   killTimeout: 3000,
-  EOL: '\r\t--MegSeparator--\r\t',
+  EOL: '\t--MegSeparator--\t',
   AUTO_EOL: true,
   stdioOption: {
     stdin: 'pipe',
@@ -105,7 +105,7 @@ export class PyCaller {
       })
       return
     }
-    const content = code.map(line => `${line}\n`).join('')
+    const content = code.map(line => `${line}${os.EOL}`).join('')
     this.subprocess.stdin?.write(Buffer.from(content), async(error) => {
       if (error) {
         Logger.error(error)
@@ -116,7 +116,7 @@ export class PyCaller {
         // flush too fast, will cause python read data as a single line
         // https://stackoverflow.com/questions/12510835/stdout-flush-for-nodejs
         await _setTimeout(100)
-        this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}\n`))
+        this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}${os.EOL}`))
       }
     })
   }
@@ -130,7 +130,11 @@ export class PyCaller {
       return
 
     if (force) {
-      if (this.subprocess.pid && os.platform() === 'win32') {
+      if (
+          this.subprocess.pid &&
+          !this.subprocess.killed &&
+          os.platform() === 'win32'
+        ) {
         const ret = execaSync('taskkill', ['/pid', `${this.subprocess.pid}`, '/f', '/t'])
         if (ret.exitCode)
           Logger.error(ret.stdout)
