@@ -16,13 +16,21 @@ const options: IPyCallerOptions = {
 
 describe('basic', async() => {
   const $consoleLog = vi.fn(() => 'invoke')
-  const caller = new PyCaller({
+  let caller = new PyCaller({
     ...options,
     callback: () => {
       $consoleLog()
     },
   })
-  afterAll(() => {
+  beforeEach(() => {
+    caller = new PyCaller({
+      ...options,
+      callback: () => {
+        $consoleLog()
+      },
+    })
+  })
+  afterEach(() => {
     caller.destory(true)
   })
 
