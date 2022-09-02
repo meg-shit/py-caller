@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import os from 'os'
-import { setTimeout as _setTimeout } from 'timers/promises'
+// import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
 import { execaSync } from 'execa'
 import { nanoid } from 'nanoid'
@@ -48,7 +48,7 @@ export class PyCaller {
           if (!content)
             return
 
-          console.warn(content)
+          console.warn(JSON.stringify(content))
           if (content.includes(this._options.killSignal)) {
             Logger.info('Python process received exited signal')
             this.destory()

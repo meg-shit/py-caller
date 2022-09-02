@@ -16,7 +16,7 @@ gen = read_stdin()
 try:
     for line in gen:
         if line != ("\t--MegSeparator--\t\n"):
-            print(line + "\t--MegSeparator--\t")
+            print(line + "\t--MegSeparator--\t", file=sys.stdout, flush=True)
             sys.stdout.flush()
 except:
     print('exception stderr', file=sys.stderr)
