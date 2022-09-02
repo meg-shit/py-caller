@@ -14,7 +14,7 @@ const options: IPyCallerOptions = {
   callback: data => console.log(data),
 }
 
-describe('basic', async() => {
+describe('basic', () => {
   const $consoleLog = vi.fn(() => 'invoke')
   let caller: PyCaller | null = null
   beforeEach(() => {
@@ -33,9 +33,10 @@ describe('basic', async() => {
   it('works', async() => {
     await _setTimeout(500)
     expect(caller!.isAlive()).toBeTruthy()
-    caller!.runPython(['come from nodejs (basic)'])
+    await caller!.runPython(['come from nodejs (basic)'])
     await _setTimeout(500)
-    caller!.runPython(['come from nodejs (basic)'])
+    await caller!.runPython(['come from nodejs (basic)'])
+
     expect($consoleLog).toBeCalled()
     expect($consoleLog).toReturnWith('invoke')
     expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
