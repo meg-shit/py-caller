@@ -38,8 +38,10 @@ describe('basic', () => {
     }
     catch (error) {}
     finally {
-      if (caller)
+      if (caller) {
+        await _setTimeout(500)
         caller.destory()
+      }
     }
   })
 })
