@@ -14,7 +14,7 @@ def read_stdin():
 gen = read_stdin()
 
 try:
-    for line in gen:
+    for line in sys.stdin:
         print("debug:" + line, file=sys.stderr, flush=True)
         if line != "\t--MegSeparator--\t\n":
             print(line + "\t--MegSeparator--\t", flush=True)
