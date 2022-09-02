@@ -48,6 +48,8 @@ export class PyCaller {
           if (!content)
             return
 
+          console.warn(JSON.stringify(content))
+
           if (content.includes(this._options.killSignal)) {
             Logger.info('Python process received exited signal')
             this.destory()
