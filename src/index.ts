@@ -118,6 +118,7 @@ export class PyCaller {
         // flush too fast, will cause python read data as a single line
         // https://stackoverflow.com/questions/12510835/stdout-flush-for-nodejs
         await _setTimeout(100)
+        console.warn(JSON.stringify(content))
         this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}${os.EOL}`))
       }
     })
