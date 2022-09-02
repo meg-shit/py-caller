@@ -39,7 +39,7 @@ describe('basic', () => {
     catch (error) {}
     finally {
       if (caller) {
-        await _setTimeout(500)
+        await _setTimeout(1000)
         caller.destory()
       }
     }
