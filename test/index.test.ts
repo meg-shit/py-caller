@@ -57,7 +57,6 @@ describe('pools', () => {
     const $console = vi.fn(() => 'invoke')
     const key = 'default'
     pool.listen(key, (data) => {
-      // console.warn(data)
       expect(data).not.toBeNull()
       $console()
     })
