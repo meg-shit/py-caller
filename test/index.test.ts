@@ -16,32 +16,31 @@ const options: IPyCallerOptions = {
 
 describe('basic', () => {
   const $consoleLog = vi.fn(() => 'invoke')
-  let caller: PyCaller | null = null
-  beforeEach(() => {
-    caller = new PyCaller({
-      ...options,
-      callback: () => {
-        $consoleLog()
-      },
-    })
-  })
-  afterEach(() => {
-    process.nextTick(() => {
-      if (caller)
-        caller.destory()
-    })
-  })
 
   it('works', async() => {
-    await _setTimeout(500)
-    expect(caller!.isAlive()).toBeTruthy()
-    await caller!.runPython(['come from nodejs (basic)'])
-    await _setTimeout(500)
-    await caller!.runPython(['come from nodejs (basic)'])
+    let caller = null
+    try {
+      caller = new PyCaller({
+        ...options,
+        callback: () => {
+          $consoleLog()
+        },
+      })
+      await _setTimeout(500)
+      expect(caller!.isAlive()).toBeTruthy()
+      await caller!.runPython(['come from nodejs (basic)'])
+      await _setTimeout(500)
+      await caller!.runPython(['come from nodejs (basic)'])
 
-    expect($consoleLog).toBeCalled()
-    expect($consoleLog).toReturnWith('invoke')
-    expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
+      expect($consoleLog).toBeCalled()
+      expect($consoleLog).toReturnWith('invoke')
+      expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
+    }
+    catch (error) {}
+    finally {
+      if (caller)
+        caller.destory()
+    }
   })
 })
 
