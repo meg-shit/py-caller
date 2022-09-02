@@ -106,12 +106,15 @@ export class PyCaller {
       })
       return
     }
-    const content = code.map(line => `${line}${os.EOL}`).join('')
+    let content = code.map(line => `${line}${os.EOL}`).join('')
     if (!this.subprocess.stdin)
       return
 
+    if (this._options.AUTO_EOL)
+      content += `${this._options.EOL}${os.EOL}`
+
     this.subprocess.stdin.write(
-      Buffer.from(`${content}${this._options.EOL}${os.EOL}`),
+      Buffer.from(content),
       (error) => {
         if (error)
           Logger.error(error)
