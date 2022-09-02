@@ -14,7 +14,7 @@ const options: IPyCallerOptions = {
   callback: data => console.log(data),
 }
 
-describe.only('basic', async() => {
+describe('basic', async() => {
   const $consoleLog = vi.fn(() => 'invoke')
   const caller = new PyCaller({
     ...options,
