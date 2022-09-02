@@ -132,6 +132,8 @@ export class PyCaller {
     if (!this.subprocess)
       return
 
+    this.subprocess?.stdin?.end()
+
     if (force) {
       if (
         this.subprocess.pid
