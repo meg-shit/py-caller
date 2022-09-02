@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'url'
 import path from 'path'
 import { setTimeout as _setTimeout } from 'timers/promises'
-import type { SpyInstance } from 'vitest'
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PyCaller, PyCallerPool } from '@'
 import type { IPyCallerOptions } from '@/types'
@@ -9,21 +8,19 @@ import type { IPyCallerOptions } from '@/types'
 const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/demo.py')
 
 const options: IPyCallerOptions = {
-  command: 'python',
+  command: 'python3',
   args: [scriptPath],
   // eslint-disable-next-line no-console
   callback: data => console.log(data),
 }
 
 describe('basic', async() => {
-  let $consoleLog: null | SpyInstance = null
-  const caller = new PyCaller(options)
-
-  beforeEach(() => {
-    $consoleLog = vi.spyOn(console, 'log').mockImplementation(() => 'invoke')
-  })
-  afterEach(() => {
-    $consoleLog?.mockReset()
+  const $consoleLog = vi.fn(() => 'invoke')
+  const caller = new PyCaller({
+    ...options,
+    callback: () => {
+      $consoleLog()
+    },
   })
   afterAll(() => {
     caller.destory(true)
@@ -96,7 +93,7 @@ describe('perf', async() => {
   const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/size.py')
 
   const options: IPyCallerOptions = {
-    command: 'python',
+    command: 'python3',
     args: [scriptPath],
     // eslint-disable-next-line no-console
     callback: (data) => {
