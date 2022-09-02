@@ -27,7 +27,7 @@ describe('basic', async() => {
   })
 
   it('works', async() => {
-    caller.runPython(['come from nodejs'])
+    caller.runPython(['come from nodejs (basic)'])
     await _setTimeout(2000)
     expect($consoleLog).toBeCalled()
     expect($consoleLog).toReturnWith('invoke')
@@ -55,13 +55,13 @@ describe('pools', () => {
     pool.create(key, options)
 
     await _setTimeout(1000)
-    pool.send(key, ['come from nodejs'])
+    pool.send(key, ['come from nodejs (pools multiple callers 1)'])
     await _setTimeout(1000)
     expect($console).toBeCalled()
     expect($console).toBeCalledTimes(2)
     expect($console).toReturnWith('invoke')
     expect(pool.listenerCount(key)).toBe(1)
-    pool.send(key, [`come from nodejs ${id1}`], id1)
+    pool.send(key, [`come from nodejs ${id1} (pools multiple callers 2)`], id1)
     await _setTimeout(500)
     expect($console).toBeCalledTimes(3)
   })
@@ -81,7 +81,7 @@ describe('pools', () => {
     pool.create(key, options)
 
     await _setTimeout(500)
-    pool.send(key, ['come from nodejs'])
+    pool.send(key, ['come from nodejs (pools multiple listener)'])
     await _setTimeout(500)
     expect($console1).toBeCalled()
     expect($console2).toBeCalled()
