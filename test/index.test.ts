@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'url'
 import path from 'path'
 import { setTimeout as _setTimeout } from 'timers/promises'
-import type { SpyInstance } from 'vitest'
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PyCaller, PyCallerPool } from '@'
 import type { IPyCallerOptions } from '@/types'
@@ -15,26 +14,35 @@ const options: IPyCallerOptions = {
   callback: data => console.log(data),
 }
 
-describe('basic', async() => {
-  let $consoleLog: null | SpyInstance = null
-  const caller = new PyCaller(options)
-
-  beforeEach(() => {
-    $consoleLog = vi.spyOn(console, 'log').mockImplementation(() => 'invoke')
-  })
-  afterEach(() => {
-    $consoleLog?.mockReset()
-  })
-  afterAll(() => {
-    caller.destory()
-  })
+describe('basic', () => {
+  const $consoleLog = vi.fn(() => 'invoke')
 
   it('works', async() => {
-    caller.runPython(['come from nodejs'])
-    await _setTimeout(1000)
-    expect($consoleLog).toBeCalled()
-    expect($consoleLog).toReturnWith('invoke')
-    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
+    let caller = null
+    try {
+      caller = new PyCaller({
+        ...options,
+        callback: () => {
+          $consoleLog()
+        },
+      })
+      await _setTimeout(500)
+      expect(caller!.isAlive()).toBeTruthy()
+      await caller!.runPython(['come from nodejs (basic)'])
+      await _setTimeout(500)
+      await caller!.runPython(['come from nodejs (basic)'])
+
+      expect($consoleLog).toBeCalled()
+      expect($consoleLog).toReturnWith('invoke')
+      expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
+    }
+    catch (error) {}
+    finally {
+      if (caller) {
+        await _setTimeout(1000)
+        caller.destory()
+      }
+    }
   })
 })
 
@@ -57,13 +65,13 @@ describe('pools', () => {
     pool.create(key, options)
 
     await _setTimeout(1000)
-    pool.send(key, ['come from nodejs'])
+    pool.send(key, ['come from nodejs (pools multiple callers 1)'])
     await _setTimeout(1000)
     expect($console).toBeCalled()
     expect($console).toBeCalledTimes(2)
     expect($console).toReturnWith('invoke')
     expect(pool.listenerCount(key)).toBe(1)
-    pool.send(key, [`come from nodejs ${id1}`], id1)
+    pool.send(key, [`come from nodejs ${id1} (pools multiple callers 2)`], id1)
     await _setTimeout(500)
     expect($console).toBeCalledTimes(3)
   })
@@ -83,7 +91,7 @@ describe('pools', () => {
     pool.create(key, options)
 
     await _setTimeout(500)
-    pool.send(key, ['come from nodejs'])
+    pool.send(key, ['come from nodejs (pools multiple listener)'])
     await _setTimeout(500)
     expect($console1).toBeCalled()
     expect($console2).toBeCalled()
@@ -106,7 +114,7 @@ describe('perf', async() => {
   const caller = new PyCaller(options)
 
   afterAll(() => {
-    caller.destory()
+    caller.destory(true)
   })
 
   it('works with 10M Output', async() => {

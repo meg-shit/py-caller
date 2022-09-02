@@ -1,16 +1,17 @@
 import { EventEmitter } from 'events'
 import os from 'os'
-import { setTimeout as _setTimeout } from 'timers/promises'
+// import { setTimeout as _setTimeout } from 'timers/promises'
 import type { ExecaChildProcess } from 'execa'
+import { execaSync } from 'execa'
 import { nanoid } from 'nanoid'
 import type { IOptions, IPyCallerOptions, IPyCallerPoolData, IPyCallerPoolOptions } from './types'
 
 import Logger from './logger'
 
 const defaultOptions: IOptions = {
-  killSignal: '\r\t--MegEXIT--\r\t',
+  killSignal: '\t--MegEXIT--\t',
   killTimeout: 3000,
-  EOL: '\r\t--MegSeparator--\r\t',
+  EOL: '\t--MegSeparator--\t',
   AUTO_EOL: true,
   stdioOption: {
     stdin: 'pipe',
@@ -104,23 +105,25 @@ export class PyCaller {
       })
       return
     }
-    const content = code.map(line => `${line}\n`).join('')
-    this.subprocess.stdin?.write(Buffer.from(content), async(error) => {
-      if (error) {
-        Logger.error(error)
-        return
-      }
+    let content = code.map(line => `${line}${os.EOL}`).join('')
+    if (!this.subprocess.stdin)
+      return
 
-      if (this._options.AUTO_EOL) {
-        // flush too fast, will cause python read data as a single line
-        // https://stackoverflow.com/questions/12510835/stdout-flush-for-nodejs
-        await _setTimeout(100)
-        this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}\n`))
-      }
-    })
+    if (this._options.AUTO_EOL)
+      content += `${this._options.EOL}${os.EOL}`
+
+    this.subprocess.stdin.write(
+      content,
+      (error) => {
+        if (error)
+          Logger.error(error)
+      })
   }
 
   isAlive() {
+    if (!this.subprocess)
+      return false
+
     return !this.subprocess.killed
   }
 
@@ -128,13 +131,31 @@ export class PyCaller {
     if (!this.subprocess)
       return
 
-    this.subprocess?.kill()
+    try {
+      this.subprocess.stdin?.end()
+    }
+    catch (error) {
+      Logger.error(error)
+    }
 
     if (force) {
-      this.subprocess?.kill('SIGKILL')
+      if (
+        this.subprocess.pid
+          && !this.subprocess.killed
+          && os.platform() === 'win32'
+      ) {
+        const ret = execaSync('taskkill', ['/pid', `${this.subprocess.pid}`, '/f', '/t'])
+        if (ret.exitCode)
+          Logger.error(ret.stdout)
+      }
+
+      this.subprocess.kill('SIGKILL')
 
       return
     }
+
+    this.subprocess?.kill()
+
     setTimeout(() => {
       if (this.isAlive()) {
         Logger.error('Python process still alive after 5s, force kill it')
