@@ -29,8 +29,8 @@ describe('basic', () => {
       await _setTimeout(500)
       expect(caller!.isAlive()).toBeTruthy()
       await caller!.runPython(['come from nodejs (basic)'])
-      await _setTimeout(500)
-      await caller!.runPython(['come from nodejs (basic)'])
+      // await _setTimeout(500)
+      // await caller!.runPython(['come from nodejs (basic)'])
 
       expect($consoleLog).toBeCalled()
       expect($consoleLog).toReturnWith('invoke')
