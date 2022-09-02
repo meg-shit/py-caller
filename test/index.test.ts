@@ -16,12 +16,7 @@ const options: IPyCallerOptions = {
 
 describe('basic', async() => {
   const $consoleLog = vi.fn(() => 'invoke')
-  let caller = new PyCaller({
-    ...options,
-    callback: () => {
-      $consoleLog()
-    },
-  })
+  let caller: PyCaller | null = null
   beforeEach(() => {
     caller = new PyCaller({
       ...options,
@@ -31,18 +26,19 @@ describe('basic', async() => {
     })
   })
   afterEach(() => {
-    caller.destory(true)
+    if (caller)
+      caller.destory(true)
   })
 
   it('works', async() => {
-    await _setTimeout(1000)
-    expect(caller.isAlive()).toBeTruthy()
-    caller.runPython(['come from nodejs (basic)'])
-    await _setTimeout(1000)
-    caller.runPython(['come from nodejs (basic)'])
+    await _setTimeout(500)
+    expect(caller!.isAlive()).toBeTruthy()
+    caller!.runPython(['come from nodejs (basic)'])
+    await _setTimeout(500)
+    caller!.runPython(['come from nodejs (basic)'])
     expect($consoleLog).toBeCalled()
     expect($consoleLog).toReturnWith('invoke')
-    expect(caller.subprocess.stdin?.writableEnded).toBe(false)
+    expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
   })
 })
 
