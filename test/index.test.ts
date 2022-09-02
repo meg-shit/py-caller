@@ -29,7 +29,7 @@ describe('basic', async() => {
   it('works', async() => {
     await _setTimeout(500)
     caller.runPython(['come from nodejs (basic)'])
-    await _setTimeout(1000)
+    await _setTimeout(500)
     expect($consoleLog).toBeCalled()
     expect($consoleLog).toReturnWith('invoke')
     expect(caller.subprocess.stdin?.writableEnded).toBe(false)
