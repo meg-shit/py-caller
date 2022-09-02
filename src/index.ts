@@ -131,10 +131,10 @@ export class PyCaller {
 
     if (force) {
       if (
-          this.subprocess.pid &&
-          !this.subprocess.killed &&
-          os.platform() === 'win32'
-        ) {
+        this.subprocess.pid
+          && !this.subprocess.killed
+          && os.platform() === 'win32'
+      ) {
         const ret = execaSync('taskkill', ['/pid', `${this.subprocess.pid}`, '/f', '/t'])
         if (ret.exitCode)
           Logger.error(ret.stdout)
