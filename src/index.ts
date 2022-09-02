@@ -114,7 +114,7 @@ export class PyCaller {
       content += `${this._options.EOL}${os.EOL}`
 
     this.subprocess.stdin.write(
-      Buffer.from(content),
+      content,
       (error) => {
         if (error)
           Logger.error(error)
