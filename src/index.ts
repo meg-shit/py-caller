@@ -107,19 +107,15 @@ export class PyCaller {
       return
     }
     const content = code.map(line => `${line}${os.EOL}`).join('')
-    this.subprocess.stdin?.write(Buffer.from(content), async(error) => {
-      if (error) {
-        Logger.error(error)
-        return
-      }
+    if (!this.subprocess.stdin)
+      return
 
-      if (this._options.AUTO_EOL) {
-        // flush too fast, will cause python read data as a single line
-        // https://stackoverflow.com/questions/12510835/stdout-flush-for-nodejs
-        // await _setTimeout(100)
-        this.subprocess.stdin?.write(Buffer.from(`${this._options.EOL}${os.EOL}`))
-      }
-    })
+    this.subprocess.stdin.write(
+      Buffer.from(`${content}${this._options.EOL}${os.EOL}`),
+      (error) => {
+        if (error)
+          Logger.error(error)
+      })
   }
 
   isAlive() {

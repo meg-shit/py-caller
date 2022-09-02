@@ -27,7 +27,6 @@ describe('basic', async() => {
   })
 
   it('works', async() => {
-    caller.isAlive()
     await _setTimeout(1000)
     expect(caller.isAlive()).toBeTruthy()
     caller.runPython(['come from nodejs (basic)'])
