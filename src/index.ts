@@ -122,6 +122,9 @@ export class PyCaller {
   }
 
   isAlive() {
+    if (!this.subprocess)
+      return false
+
     return !this.subprocess.killed
   }
 
