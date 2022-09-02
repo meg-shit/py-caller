@@ -39,6 +39,8 @@ describe('basic', () => {
     catch (error) {}
     finally {
       if (caller) {
+        caller.subprocess.stdin?.uncork()
+        caller.subprocess.stdin?.end()
         await _setTimeout(1000)
         caller.destory()
       }
