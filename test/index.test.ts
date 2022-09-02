@@ -8,7 +8,7 @@ import type { IPyCallerOptions } from '@/types'
 const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/demo.py')
 
 const options: IPyCallerOptions = {
-  command: 'python3',
+  command: 'python',
   args: [scriptPath],
   // eslint-disable-next-line no-console
   callback: data => console.log(data),
@@ -18,7 +18,7 @@ describe('basic', () => {
   const $consoleLog = vi.fn(() => 'invoke')
 
   it('works', async() => {
-    let caller = null
+    let caller: PyCaller | null = null
     try {
       caller = new PyCaller({
         ...options,
@@ -35,13 +35,16 @@ describe('basic', () => {
       expect($consoleLog).toBeCalled()
       expect($consoleLog).toReturnWith('invoke')
       expect(caller!.subprocess.stdin?.writableEnded).toBe(false)
+      await new Promise((resolve) => {
+        caller?.subprocess.stdin?.end(() => {
+          resolve(0)
+        })
+      })
     }
     catch (error) {}
     finally {
       if (caller) {
-        caller.subprocess.stdin?.uncork()
-        caller.subprocess.stdin?.end()
-        await _setTimeout(1000)
+        await _setTimeout(100)
         caller.destory()
       }
     }
@@ -105,7 +108,7 @@ describe('perf', async() => {
   const scriptPath = path.resolve(fileURLToPath(import.meta.url), './../../examples/size.py')
 
   const options: IPyCallerOptions = {
-    command: 'python3',
+    command: 'python',
     args: [scriptPath],
     // eslint-disable-next-line no-console
     callback: (data) => {
