@@ -49,8 +49,8 @@ const command = 'python'
 const args = ['demo.py'] // python script location
 
 const callerOpts = {
-  killSignal: '\r\t--MegEXIT--\r\t',
-  EOL: '\r\t--MegSeparator--\r\t',
+  killSignal: '\t--MegEXIT--\t',
+  EOL: '\t--MegSeparator--\t',
   AUTO_EOL: true,
   killTimeout: 3000,
 }
@@ -116,8 +116,8 @@ pyCallerPool.send(key, ['hello world~'])
   * `options`: The options to pass to the caller
   * Type: Object （[definition](https://github.com/meg-shit/pyCaller/blob/7d3b882e3a6b0683842faecdc3c7fcb1171f6b2a/src/types.ts#L3)）
   * Default: `{
-      killSignal: '\r\t--MegEXIT--\r\t',
-      EOL: '\r\t--MegSeparator--\r\t',
+      killSignal: '\t--MegEXIT--\t',
+      EOL: '\t--MegSeparator--\t',
       AUTO_EOL: true,
       killTimeout: 3000,
       stdioOption: {
