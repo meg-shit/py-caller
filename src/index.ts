@@ -149,19 +149,19 @@ export class PyCaller {
           Logger.error(ret.stdout)
       }
 
-      this.subprocess.kill('SIGKILL')
+      this.subprocess?.kill()
+
+      setTimeout(() => {
+        if (this.isAlive()) {
+          Logger.error(`Python process still alive after ${this._options.killTimeout}s, force kill it`)
+          this.subprocess?.kill('SIGKILL')
+        }
+      }, this._options.killTimeout)
 
       return
     }
 
     this.subprocess?.kill()
-
-    setTimeout(() => {
-      if (this.isAlive()) {
-        Logger.error('Python process still alive after 5s, force kill it')
-        this.subprocess?.kill('SIGKILL')
-      }
-    }, this._options.killTimeout)
   }
 }
 
